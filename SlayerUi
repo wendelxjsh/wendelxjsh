@@ -155,7 +155,7 @@ function Library:CreateWindow(hubname)
     Disc_Logo.BorderSizePixel = 0
     Disc_Logo.Position = UDim2.new(0, 5, 0, 1)
     Disc_Logo.Size = UDim2.new(0, 23, 0, 23)
-    Disc_Logo.Image = "http://www.roblox.com/asset/?id=12058969086"
+    Disc_Logo.Image = "http://www.roblox.com/asset/?id=91062721750487"
 
     Disc_Title.Name = "Disc_Title"
     Disc_Title.Parent = Discord
@@ -815,7 +815,7 @@ function Library:CreateWindow(hubname)
                     ImageButton.BorderSizePixel = 0
                     ImageButton.Position = UDim2.new(0, 242, 0, 1)
                     ImageButton.Size = UDim2.new(0, 21, 0, 22)
-                    ImageButton.Image = "rbxassetid://14834203285"
+                    ImageButton.Image = "rbxassetid://91062721750487"
 
                     if default then
                         for i,v in pairs(list) do
