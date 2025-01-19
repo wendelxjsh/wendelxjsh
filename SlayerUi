@@ -117,19 +117,19 @@ function Library:CreateWindow(hubname)
 
     MInimize_Button.Name = "MInimize_Button"
     MInimize_Button.Parent = Body
-    MInimize_Button.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    MInimize_Button.BackgroundColor3 = Color3.fromRGB(128,0,128)
     MInimize_Button.BackgroundTransparency = 1.000
     MInimize_Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
     MInimize_Button.BorderSizePixel = 0
-    MInimize_Button.Position = UDim2.new(0, 570, 0, 0)
+    MInimize_Button.Position = UDim2.new(0, 570, 0)
     MInimize_Button.Rotation = -315
     MInimize_Button.Size = UDim2.new(0, 30, 0, 30)
     MInimize_Button.AutoButtonColor = false
     MInimize_Button.Font = Enum.Font.SourceSans
     MInimize_Button.Text = "+"
-    MInimize_Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MInimize_Button.TextColor3 = Color3.fromRGB(128,0,128)
     MInimize_Button.TextSize = 40.000
-    MInimize_Button.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+    MInimize_Button.TextStrokeColor3 = Color3.fromRGB(128, 0, 128)
 
     Discord.Name = "Discord"
     Discord.Parent = Body
