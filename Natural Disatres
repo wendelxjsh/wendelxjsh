@@ -19,8 +19,8 @@ local redzlib = {
 			["Color Hub 2"] = Color3.fromRGB(0, 0, 0),
 			["Color Stroke"] = Color3.fromRGB(255, 255, 255),
 			["Color Theme"] = Color3.fromRGB(0, 0, 0),
-			["Color Text"] = Color3.fromRGB(255, 255, 255),
-			["Color Dark Text"] = Color3.fromRGB(255, 255, 255)
+			["Color Text"] = Color3.fromRGB(220, 255, 0),
+			["Color Dark Text"] = Color3.fromRGB(220, 255, 0)
 		},
 		Dark = {
 			["Color Hub 1"] = ColorSequence.new({
@@ -31,8 +31,8 @@ local redzlib = {
 			["Color Hub 2"] = Color3.fromRGB(45, 45, 45),
 			["Color Stroke"] = Color3.fromRGB(65, 65, 65),
 			["Color Theme"] = Color3.fromRGB(0, 0, 0),
-			["Color Text"] = Color3.fromRGB(255, 255, 255),
-			["Color Dark Text"] = Color3.fromRGB(255, 255, 255)
+			["Color Text"] = Color3.fromRGB(220, 255, 0),
+			["Color Dark Text"] = Color3.fromRGB(220, 255, 0)
 		},
 		Purple = {
 			["Color Hub 1"] = ColorSequence.new({
@@ -1548,7 +1548,7 @@ function redzlib:MakeWindow(Configs)
 	
 	ConnectSave(ControlSize2, function()
 		redzlib.Save.TabSize = MainScroll.Size.X.Offset
-		SaveJson("redz library V5.json", redzlib.Save)
+		SaveJson("Shinra Hub.json", redzlib.Save)
 	end)
 	
 	local ButtonsFolder = Create("Folder", TopBar, {
