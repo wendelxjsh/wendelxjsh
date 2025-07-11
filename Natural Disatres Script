@@ -471,7 +471,31 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BuyPetEggEvent = ReplicatedStorage.GameEvents.BuyPetEgg
 
+-- 🥚 Toggle para comprar todos os ovos automaticamente
+local Toggle_BuyAllEggs = Tabs.Shop:AddToggle("Toggle_BuyAllEggs", {
+    Title = "Buy All Eggs",
+    Description = "",
+    Default = false
+})
+
+Toggle_BuyAllEggs:OnChanged(function()
+    _G.buyAllEggs = Toggle_BuyAllEggs.Value
+end)
+
+-- 🔁 Loop sem delay, sem lag, usando Heartbeat
+RunService.Heartbeat:Connect(function()
+    if _G.buyAllEggs then
+        pcall(function()
+            BuyPetEggEvent:FireServer(1)
+            BuyPetEggEvent:FireServer(2)
+            BuyPetEggEvent:FireServer(3)
+        end)
+    end
+end)
 
 -- Addons:
 -- SaveManager (Allows you to have a configuration system)
