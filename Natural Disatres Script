@@ -1,405 +1,511 @@
-local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
-local window = DrRayLibrary:Load("Natural Disatres Script", "//Feito por Wendelx!!//")
+    local NameScript = '[ 🌱 Grow a Garden]'
+    
 
-local tab = DrRayLibrary.newTab("Natural Disatres", "ImageIdHere")
+    local Window = Fluent:CreateWindow({
+        Title = NameScript,
+        SubTitle = "by wendelxz",
+        TabWidth = 130,
+        Size = UDim2.fromOffset(550, 330),
+        Acrylic = false,
+        Theme = "Amethyst",
+        MinimizeKey = Enum.KeyCode.LeftControl
+    })
+   -- ===================== icon ===================== --
+        local screenGui = Instance.new("ScreenGui")
+        local minimizeButton = Instance.new("ImageButton")
+        local buttonCorner = Instance.new("UICorner")
 
-tab.newButton("Sair e Entrar No Mesmo Serve!!", "//Pra prevenir o ban injusto!! use em 20 min e 20 min//", function()
-     local Players = game:GetService("Players")
-local TeleportService = game:GetService("TeleportService")
+        -- ตั้งชื่อและตั้งค่าของ ScreenGui
+        screenGui.Name = "MobileMinimize"
+        screenGui.Parent = game:GetService("CoreGui")
+        screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-local player = Players.LocalPlayer
-local placeId = game.PlaceId -- Obtém o ID do jogo atual
+        -- ตั้งค่าของ ImageButton (Minimize Button)
+        minimizeButton.Parent = screenGui
+        minimizeButton.BackgroundColor3 = Color3.new(1.000000, 1.000000, 1.000000)
+        minimizeButton.BorderColor3 = Color3.new(1.000000, 1.000000, 1.000000)
+        minimizeButton.BorderSizePixel = 0
+        minimizeButton.Position = UDim2.new(0,584,0,14)
 
--- Função para reconectar o jogador
-local function rejoinGame()
-    if player then
-        TeleportService:Teleport(placeId, player) -- Teletransporta o jogador para o mesmo jogo
-    else
-        warn("Jogador não encontrado!")
+        -- ตั้งขนาดเริ่มต้นของปุ่ม
+        local originalSize = UDim2.new(0, 45, 0, 45)
+        minimizeButton.Size = originalSize + UDim2.new(0, originalSize.X.Offset * 0.15, 0, originalSize.Y.Offset * 0.15)
+        minimizeButton.Image = "rbxassetid://13118946357"
+
+        -- เพิ่มมุมโค้งให้กับปุ่ม
+        buttonCorner.CornerRadius = UDim.new(0.2, 0)
+        buttonCorner.Parent = minimizeButton
+
+        -- ตัวแปรสำหรับการลาก
+        local dragging = false
+        local dragInput, touchPos, buttonPos
+
+        -- ฟังก์ชันการเริ่มต้นการลาก
+        minimizeButton.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true
+                touchPos = input.Position
+                buttonPos = minimizeButton.Position
+
+                -- เมื่อการลากสิ้นสุด
+                input.Changed:Connect(function()
+                    if input.UserInputState == Enum.UserInputState.End then
+                        dragging = false
+                    end
+                end)
+            end
+        end)
+
+        -- ฟังก์ชันตรวจจับการเคลื่อนไหวของเมาส์/สัมผัส
+        minimizeButton.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                dragInput = input
+            end
+        end)
+
+        -- ฟังก์ชันการลากปุ่ม
+        game:GetService("UserInputService").InputChanged:Connect(function(input)
+            if input == dragInput and dragging then
+                local delta = input.Position - touchPos
+                minimizeButton.Position = UDim2.new(
+                    buttonPos.X.Scale,
+                    buttonPos.X.Offset + delta.X,
+                    buttonPos.Y.Scale,
+                    buttonPos.Y.Offset + delta.Y
+                )
+            end
+        end)
+
+        -- เมื่อคลิกปุ่มจะให้หน้าต่างย่อ
+        minimizeButton.MouseButton1Click:Connect(function()
+            Window:Minimize()
+        end)
+    -- ===================== icon ===================== --
+
+    function ShowNotification(Content,SubContent)
+        Fluent:Notify({
+            Title = "WENDELXZ",
+            Content = Content,
+            SubContent = SubContent,
+            Duration = 2.5
+        })
     end
-end
 
--- Reconectar automaticamente ao executar o script (remova esta linha se quiser um botão para rejoin)
-rejoinGame()
-end)
+    --Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
+    local Tabs = {
+        Main = Window:AddTab({ Title = "Farm", Icon = "gamepad-2" }),
+        Trial = Window:AddTab({ Title = "Pet", Icon = "gem" }),
+        Shop = Window:AddTab({ Title = "Shop", Icon = "gem" }),
+        Teleport = Window:AddTab({ Title = "Teleport", Icon = "slack" }),
+        Webhooks = Window:AddTab({ Title = "Webhook", Icon = "ghost" }),
+        Miscellaneous = Window:AddTab({ Title = "Miscellaneous", Icon = "list-ordered" }),
+        Tools = Window:AddTab({ Title = "Tools", Icon = "wrench" }),
+        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    }
 
-tab.newButton("AntiHackVoô", "//Prevenir Aqueles Hacker Que Te Joga Pra Longe!!//", function()
-     -- // Constants \\ --
--- [ Services ] --
-local Services = setmetatable({}, {__index = function(Self, Index)
-local NewService = game.GetService(game, Index)
-if NewService then
-Self[Index] = NewService
-end
-return NewService
-end})
+    local Options = Fluent.Options
 
--- [ LocalPlayer ] --
-local LocalPlayer = Services.Players.LocalPlayer
 
--- // Functions \\ --
-local function PlayerAdded(Player)
-   local Detected = false
-   local Character;
-   local PrimaryPart;
+Tabs.Teleport:AddSection("GEAR | EGGS")
+Tabs.Teleport:AddButton({
+    Title = "TP GEAR",
+    Description = "",
+    Callback = function()
+        -- Apenas posição (sem virar o jogador)
+        local teleportCFrame = CFrame.new(-286.15240478515625, 2.999999761581421, -13.778722763061523)
 
-   local function CharacterAdded(NewCharacter)
-       Character = NewCharacter
-       repeat
-           wait()
-           PrimaryPart = NewCharacter:FindFirstChild("HumanoidRootPart")
-       until PrimaryPart
-       Detected = false
-   end
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
 
-   CharacterAdded(Player.Character or Player.CharacterAdded:Wait())
-   Player.CharacterAdded:Connect(CharacterAdded)
-   Services.RunService.Heartbeat:Connect(function()
-       if (Character and Character:IsDescendantOf(workspace)) and (PrimaryPart and PrimaryPart:IsDescendantOf(Character)) then
-           if PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 or PrimaryPart.AssemblyLinearVelocity.Magnitude > 100 then
-               if Detected == false then
-                   game.StarterGui:SetCore("ChatMakeSystemMessage", {
-                       Text = "Fling Exploit detected, Player: " .. tostring(Player);
-                       Color = Color3.fromRGB(255, 200, 0);
-                   })
-               end
-               Detected = true
-               for i,v in ipairs(Character:GetDescendants()) do
-                   if v:IsA("BasePart") then
-                       v.CanCollide = false
-                       v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-                       v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-                       v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
-                   end
-               end
-               PrimaryPart.CanCollide = false
-               PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-               PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-               PrimaryPart.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
-           end
-       end
-   end)
-end
+        -- Espera o HumanoidRootPart
+        local rootPart = character:WaitForChild("HumanoidRootPart")
 
--- // Event Listeners \\ --
-for i,v in ipairs(Services.Players:GetPlayers()) do
-   if v ~= LocalPlayer then
-       PlayerAdded(v)
-   end
-end
-Services.Players.PlayerAdded:Connect(PlayerAdded)
+        -- Faz o teleporte
+        rootPart.CFrame = teleportCFrame
 
-local LastPosition = nil
-Services.RunService.Heartbeat:Connect(function()
-   pcall(function()
-       local PrimaryPart = LocalPlayer.Character.PrimaryPart
-       if PrimaryPart.AssemblyLinearVelocity.Magnitude > 250 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 250 then
-           PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
-           PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
-           PrimaryPart.CFrame = LastPosition
-
-           game.StarterGui:SetCore("ChatMakeSystemMessage", {
-               Text = "You were flung. Neutralizing velocity.";
-               Color = Color3.fromRGB(255, 0, 0);
-           })
-       elseif PrimaryPart.AssemblyLinearVelocity.Magnitude < 50 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 then
-           LastPosition = PrimaryPart.CFrame
-       end
-   end)
-end)
-end)
-
-tab.newButton("SpeedHack", "//Aumente Sua Velocidade Recomendo Abaixo De 50//", function()
-     -- Variabel untuk menyimpan kecepatan
-local speed = 16
-local speedEnabled = true
-local guiVisible = true
-
--- Fungsi untuk mengatur kecepatan
-local function setSpeed(newSpeed)
-    speed = newSpeed
-    if speedEnabled then
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = speed
+        -- (Opcional) Notificação de feedback
+        ShowNotification("TP GEAR", "Teleported to Gear!")
     end
-end
+})
 
--- GUI Elements
-local screenGui = Instance.new("ScreenGui")
-local mainFrame = Instance.new("Frame")
-local titleFrame = Instance.new("Frame")
-local titleLabel = Instance.new("TextLabel")
-local speedLabel = Instance.new("TextLabel")
-local toggleButton = Instance.new("TextButton")
-local increaseButton = Instance.new("TextButton")
-local decreaseButton = Instance.new("TextButton")
-local closeButton = Instance.new("TextButton")
-local minimizeButton = Instance.new("TextButton")
+Tabs.Teleport:AddButton({
+    Title = "TP EGGS",
+    Description = "",
+    Callback = function()
+        -- CFrame apenas com posição (sem virar o jogador)
+        local teleportCFrame = CFrame.new(-285.0691833496094, 12.999999761581421, 7.814676284790039)
 
--- Parent GUI to Player's PlayerGui
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-screenGui.ResetOnSpawn = false  -- Menetapkan ResetOnSpawn ke false
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
 
--- Configure Main Frame
-mainFrame.Size = UDim2.new(0, 200, 0, 130)
-mainFrame.Position = UDim2.new(0.5, -100, 0, 50)
-mainFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-mainFrame.BackgroundTransparency = 0.3
-mainFrame.BorderSizePixel = 0
-mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Parent = screenGui
-mainFrame.ClipsDescendants = true  -- Menyembunyikan elemen yang keluar dari batas bingkai
+        -- Espera o HumanoidRootPart
+        local rootPart = character:WaitForChild("HumanoidRootPart")
 
--- Add shadow to main frame
-local shadow = Instance.new("ImageLabel")
-shadow.Size = UDim2.new(1, 30, 1, 30)
-shadow.Position = UDim2.new(0, -15, 0, -15)
-shadow.Image = "rbxassetid://1316045217"  -- ID gambar bayangan
-shadow.ImageColor3 = Color3.new(0, 0, 0)
-shadow.ImageTransparency = 0.5
-shadow.ScaleType = Enum.ScaleType.Slice
-shadow.SliceCenter = Rect.new(10, 10, 118, 118)
-shadow.BackgroundTransparency = 1
-shadow.ZIndex = 0
-shadow.Parent = mainFrame
+        -- Faz o teleporte
+        rootPart.CFrame = teleportCFrame
 
--- Configure Title Frame
-titleFrame.Size = UDim2.new(1, 0, 0, 30)
-titleFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-titleFrame.BackgroundTransparency = 0.3
-titleFrame.BorderSizePixel = 0
-titleFrame.Parent = mainFrame
-
--- Configure Title Label
-titleLabel.Size = UDim2.new(1, -50, 1, 0)
-titleLabel.Position = UDim2.new(0, 5, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.TextColor3 = Color3.new(1, 1, 1)
-titleLabel.Text = "Speed Hack"
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextSize = 18  -- Mengatur ukuran teks menjadi lebih kecil
-titleLabel.Parent = titleFrame
-
--- Configure Close Button
-closeButton.Size = UDim2.new(0, 20, 0, 20)
-closeButton.Position = UDim2.new(1, -25, 0, 5)
-closeButton.BackgroundColor3 = Color3.new(1, 0, 0)
-closeButton.TextColor3 = Color3.new(1, 1, 1)
-closeButton.TextScaled = true
-closeButton.Text = "X"
-closeButton.Font = Enum.Font.GothamBold
-closeButton.Parent = titleFrame
-
--- Configure Minimize Button
-minimizeButton.Size = UDim2.new(0, 20, 0, 20)
-minimizeButton.Position = UDim2.new(1, -50, 0, 5)
-minimizeButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
-minimizeButton.TextColor3 = Color3.new(1, 1, 1)
-minimizeButton.TextScaled = true
-minimizeButton.Text = "-"
-minimizeButton.Font = Enum.Font.GothamBold
-minimizeButton.Parent = titleFrame
-
--- Configure Speed Label
-speedLabel.Size = UDim2.new(0, 180, 0, 30)
-speedLabel.Position = UDim2.new(0.5, -90, 0, 40)
-speedLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-speedLabel.BackgroundTransparency = 0.3
-speedLabel.TextColor3 = Color3.new(1, 1, 1)
-speedLabel.TextScaled = true
-speedLabel.Text = "Speed: " .. speed
-speedLabel.Font = Enum.Font.Gotham
-speedLabel.Parent = mainFrame
-
--- Configure Toggle Button
-toggleButton.Size = UDim2.new(0, 60, 0, 30)
-toggleButton.Position = UDim2.new(0.5, -30, 0, 80)
-toggleButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-toggleButton.BackgroundTransparency = 0.3
-toggleButton.TextColor3 = Color3.new(1, 1, 1)
-toggleButton.TextScaled = true
-toggleButton.Text = "On"
-toggleButton.Font = Enum.Font.GothamBold
-toggleButton.Parent = mainFrame
-
--- Configure Increase Button
-increaseButton.Size = UDim2.new(0, 30, 0, 30)
-increaseButton.Position = UDim2.new(0.75, -15, 0, 80)
-increaseButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-increaseButton.BackgroundTransparency = 0.3
-increaseButton.TextColor3 = Color3.new(1, 1, 1)
-increaseButton.TextScaled = true
-increaseButton.Text = ">"
-increaseButton.Font = Enum.Font.GothamBold
-increaseButton.Parent = mainFrame
-
--- Configure Decrease Button
-decreaseButton.Size = UDim2.new(0, 30, 0, 30)
-decreaseButton.Position = UDim2.new(0.25, -15, 0, 80)
-decreaseButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-decreaseButton.BackgroundTransparency = 0.3
-decreaseButton.TextColor3 = Color3.new(1, 1, 1)
-decreaseButton.TextScaled = true
-decreaseButton.Text = "<"
-decreaseButton.Font = Enum.Font.GothamBold
-decreaseButton.Parent = mainFrame
-
--- Function to update player's speed
-local function updateSpeed()
-    if speedEnabled then
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = speed
-    else
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
+        -- (Opcional) Notificação
+        ShowNotification("TP EGGS", "Teleported to the Eggs!")
     end
-    speedLabel.Text = "Speed: " .. speed
-end
+})
 
--- Toggle button functionality
-toggleButton.MouseButton1Click:Connect(function()
-    speedEnabled = not speedEnabled
-    toggleButton.Text = speedEnabled and "On" or "Off"
-    updateSpeed()
-end)
 
--- Increase speed functionality
-increaseButton.MouseButton1Click:Connect(function()
-    speed = speed + 5
-    updateSpeed()
-end)
+Tabs.Teleport:AddSection("GARDENS")
+Tabs.Teleport:AddButton({
+    Title = "TP GARDEN 1",
+    Description = "",
+    Callback = function()
+        -- CFrame com rotação muito leve (quase zero), ajustado corretamente
+        local teleportCFrame = CFrame.new(33.371002197265625, 2.999999761581421, -64.72699737548828) * CFrame.Angles(0, 0, 0)
 
--- Decrease speed functionality
-decreaseButton.MouseButton1Click:Connect(function()
-    speed = speed - 5
-    updateSpeed()
-end)
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
 
--- Close button functionality
-closeButton.MouseButton1Click:Connect(function()
-    setSpeed(16)  -- Mengatur kecepatan kembali ke normal (16)
-    speedEnabled = true  -- Mengaktifkan kembali kecepatan
-    toggleButton.Text = "On"  -- Mengatur teks tombol toggle kembali menjadi "On"
-    updateSpeed()
-    screenGui:Destroy()  -- Menutup GUI
-end)
+        local rootPart = character:WaitForChild("HumanoidRootPart")
 
--- Minimize button functionality
-minimizeButton.MouseButton1Click:Connect(function()
-    guiVisible = not guiVisible
-    for _, element in pairs(mainFrame:GetChildren()) do
-        if element ~= titleFrame then
-            element.Visible = guiVisible
+        rootPart.CFrame = teleportCFrame
+
+        -- (Opcional) Notificação
+        ShowNotification("TP GARDEN 1", "Teleported to Garden 1!")
+    end
+})
+
+Tabs.Teleport:AddButton({
+    Title = "TP GARDEN 2",
+    Description = "",
+    Callback = function()
+        -- Usando apenas posição, sem virar de cabeça pra baixo
+        local teleportCFrame = CFrame.new(34.14958953857422, 2.999999761581421, 37.72214126586914)
+
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+
+        rootPart.CFrame = teleportCFrame
+
+        -- (Opcional) Notificação
+        ShowNotification("TP GARDEN 2", "Teleported to Garden 2!")
+    end
+})
+
+Tabs.Teleport:AddButton({
+    Title = "TP GARDEN 3",
+    Description = "",
+    Callback = function()
+        -- Apenas posição (rotação insignificante foi ignorada)
+        local teleportCFrame = CFrame.new(-99.94257354736328, 2.999999761581421, -63.53337478637695)
+
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+
+        rootPart.CFrame = teleportCFrame
+
+        -- (Opcional) Notificação
+        ShowNotification("TP GARDEN 3", "Teleported to Garden 3!")
+    end
+})
+
+Tabs.Teleport:AddButton({
+    Title = "TP GARDEN 4",
+    Description = "",
+    Callback = function()
+        -- Apenas posição (evitando rotação que vira o personagem de cabeça para baixo)
+        local teleportCFrame = CFrame.new(-101.57278442382812, 2.999999761581421, 34.84698486328125)
+
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+
+        rootPart.CFrame = teleportCFrame
+
+        -- (Opcional) Notificação
+        ShowNotification("TP GARDEN 4", "Teleported to Garden 4!")
+    end
+})
+
+Tabs.Teleport:AddButton({
+    Title = "TP GARDEN 5",
+    Description = "",
+    Callback = function()
+        -- Apenas posição (rotação é irrelevante, então foi ignorada)
+        local teleportCFrame = CFrame.new(-235.72276306152344, 2.999999761581421, -66.48868560791016)
+
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+
+        rootPart.CFrame = teleportCFrame
+
+        -- (Opcional) Notificação
+        ShowNotification("TP GARDEN 5", "Teleported to Garden 5!")
+    end
+})
+
+Tabs.Teleport:AddButton({
+    Title = "TP GARDEN 6",
+    Description = "",
+    Callback = function()
+        -- Apenas posição (sem virar o personagem de cabeça pra baixo)
+        local teleportCFrame = CFrame.new(-236.28639221191406, 2.999999761581421, 36.294883728027344)
+
+        local Players = game:GetService("Players")
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+
+        rootPart.CFrame = teleportCFrame
+
+        -- (Opcional) Notificação
+        ShowNotification("TP GARDEN 6", "Teleported to Garden 6!")
+    end
+})
+
+Tabs.Shop:AddSection("SEED SHOP")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BuySeedEvent = ReplicatedStorage.GameEvents.BuySeedStock
+
+-- Lista oficial de sementes/frutas
+local fruits = {
+    "Carrot", "Strawberry", "Blueberry", "Orange Tulip", "Tomato",
+    "Corn", "Daffodil", "Watermelon", "Pumpkin", "Apple",
+    "Bamboo", "Coconut", "Cactus", "Dragon Fruit", "Mango",
+    "Grape", "Mushroom", "Pepper", "Cacao", "Beanstalk",
+    "Ember Lily", "Sugar Apple"
+}
+
+-- Dropdown na aba Shop
+local Dropdown_AutoBuySeeds = Tabs.Shop:AddDropdown("Dropdown_AutoBuySeeds", {
+    Title = "Select Seeds to Auto-Buy",
+    Description = "",
+    Values = fruits,
+    Multi = true,
+    Default = {"Carrot", "Strawberry"}
+})
+
+-- Armazenamento das frutas selecionadas
+local SelectedFruits = {}
+
+Dropdown_AutoBuySeeds:OnChanged(function(Value)
+    SelectedFruits = {}
+    for fruitName, isSelected in next, Value do
+        if isSelected then
+            table.insert(SelectedFruits, fruitName)
         end
     end
-    mainFrame.Size = guiVisible and UDim2.new(0, 200, 0, 130) or UDim2.new(0, 200, 0, 30)
 end)
 
--- Initial speed setup
-updateSpeed()
+-- Toggle na aba Shop
+local Toggle_AutoBuySeeds = Tabs.Shop:AddToggle("Toggle_AutoBuySeeds", {
+    Title = "Auto Buy Seeds",
+    Default = false
+})
 
--- Make the GUI draggable on mobile
-local dragging = false
-local dragInput
-local dragStart
-local startPos
+Toggle_AutoBuySeeds:OnChanged(function()
+    _G.autoBuySeeds = Toggle_AutoBuySeeds.Value
+end)
 
-local function update(input)
-    local delta = input.Position - dragStart
-    mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
+Options.Toggle_AutoBuySeeds:SetValue(false)
 
-mainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = mainFrame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
+-- Loop superleve e sem delay com Heartbeat (ideal pra SB)
+RunService.Heartbeat:Connect(function()
+    if _G.autoBuySeeds and #SelectedFruits > 0 then
+        pcall(function()
+            for _, fruitName in pairs(SelectedFruits) do
+                BuySeedEvent:FireServer(fruitName)
+                -- sem delay
             end
         end)
     end
 end)
 
-mainFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
 
-game:GetService("UserInputService").InputChanged:Connect(function(input)
-    if dragging and input == dragInput then
-        update(input)
-    end
-end)
-end)
+Tabs.Shop:AddSection("GEAR SHOP")
 
-tab.newButton("TP Início", "//Telerportar Pro Início Do Mapa//", function()
-     local player = game.Players.LocalPlayer
-local teleportPart = game.Workspace.Tower.Steps.StepPart -- Alvo do teletransporte
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BuyGearEvent = ReplicatedStorage.GameEvents.BuyGearStock
 
--- Função para teletransportar o jogador
-local function teleportToPart()
-    if teleportPart and teleportPart:IsDescendantOf(workspace) then
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-        
-        if humanoidRootPart then
-            humanoidRootPart.CFrame = teleportPart.CFrame + Vector3.new(0, 5, 0) -- Ajuste de altura para evitar colisão
-            print("Teletransportado para o destino!")
-        else
-            warn("HumanoidRootPart não encontrado!")
+-- Lista de Gears disponíveis
+local gears = {
+    "Watering Can", "Trowel", "Recall Wrench", "Basic Sprinkler",
+    "Advanced Sprinkler", "Godly Sprinkler", "Magnifying Glass", "Tanning Mirror",
+    "Master Sprinkler", "Cleaning Spray", "Favourite Tool", "Harvest Tool", "Friendship Pot"
+}
+
+-- Dropdown de gears na aba Shop
+local Dropdown_AutoBuyGear = Tabs.Shop:AddDropdown("Dropdown_AutoBuyGear", {
+    Title = "Select Gears to Auto-Buy",
+    Description = "",
+    Values = gears,
+    Multi = true,
+    Default = {"Watering Can", "Trowel"}
+})
+
+-- Lista das gears selecionadas
+local SelectedGears = {}
+
+Dropdown_AutoBuyGear:OnChanged(function(Value)
+    SelectedGears = {}
+    for gearName, isSelected in next, Value do
+        if isSelected then
+            table.insert(SelectedGears, gearName)
         end
-    else
-        warn("O local de teletransporte não foi encontrado!")
+    end
+end)
+
+-- Toggle para auto buy gears
+local Toggle_AutoBuyGear = Tabs.Shop:AddToggle("Toggle_AutoBuyGear", {
+    Title = "Auto Buy Gear",
+    Default = false
+})
+
+Toggle_AutoBuyGear:OnChanged(function()
+    _G.autoBuyGear = Toggle_AutoBuyGear.Value
+end)
+
+Options.Toggle_AutoBuyGear:SetValue(false)
+
+-- Loop superleve e rápido com Heartbeat
+RunService.Heartbeat:Connect(function()
+    if _G.autoBuyGear and #SelectedGears > 0 then
+        pcall(function()
+            for _, gearName in pairs(SelectedGears) do
+                BuyGearEvent:FireServer(gearName)
+                -- sem delay
+            end
+        end)
+    end
+end)
+
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local VirtualUser = game:GetService("VirtualUser")
+local Player = Players.LocalPlayer
+
+-- UI de proteção AFK
+local function showAFKProtectionUI()
+    if Player:FindFirstChild("PlayerGui"):FindFirstChild("AFKProtectionGui") then return end
+
+    local screenGui = Instance.new("ScreenGui", Player:WaitForChild("PlayerGui"))
+    screenGui.Name = "AFKProtectionGui"
+    screenGui.ResetOnSpawn = false
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(0, 200, 0, 40)
+    label.Position = UDim2.new(0.5, -100, 0, 50)
+    label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    label.BorderColor3 = Color3.new(1, 1, 1)
+    label.BorderSizePixel = 2
+    label.BackgroundTransparency = 0.3
+    label.Text = "🛡️ AFK Protection ON"
+    label.TextColor3 = Color3.fromRGB(0, 255, 0)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 18
+    label.Parent = screenGui
+end
+
+-- Remover UI quando desativar
+local function hideAFKProtectionUI()
+    local ui = Player:FindFirstChild("PlayerGui"):FindFirstChild("AFKProtectionGui")
+    if ui then
+        ui:Destroy()
     end
 end
 
--- Executa o teletransporte automaticamente ao carregar o script
-teleportToPart()
-end)
+-- Toggle
+local Toggle_AutoBuyGear = Tabs.Settings:AddToggle("Toggle_AutoBuyGear", {
+    Title = "Auto Buy Gear",
+    Default = false
+})
 
-tab.newButton("Voar", "//Voar/fly//", function()
-    --ARCEUS X FLY V2 SCRIPT
-loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\40\40\39\104\116\116\112\115\58\47\47\103\105\115\116\46\103\105\116\104\117\98\117\115\101\114\99\111\110\116\101\110\116\46\99\111\109\47\109\101\111\122\111\110\101\89\84\47\98\102\48\51\55\100\102\102\57\102\48\97\55\48\48\49\55\51\48\52\100\100\100\54\55\102\100\99\100\51\55\48\47\114\97\119\47\101\49\52\101\55\52\102\52\50\53\98\48\54\48\100\102\53\50\51\51\52\51\99\102\51\48\98\55\56\55\48\55\52\101\98\51\99\53\100\50\47\97\114\99\101\117\115\37\50\53\50\48\120\37\50\53\50\48\102\108\121\37\50\53\50\48\50\37\50\53\50\48\111\98\102\108\117\99\97\116\111\114\39\41\44\116\114\117\101\41\41\40\41\10\10")() 
-end)
+Toggle_AutoBuyGear:OnChanged(function(state)
+    _G.autoBuyGear = state
+    _G.antiAFK = state
 
-tab.newButton("Emotes Free", "//Todos os Emotes do Roblox//", function()
-     loadstring(game:HttpGet("https://pastebin.com/raw/eCpipCTH"))()
-end)
-
-tab.newButton("AntiHackers", "//Você será Teleportado Pra Um Lugar Bem Longe De Hackers//", function()
-  local Players = game:GetService("Players")
-local player = Players.LocalPlayer  -- Pega o jogador que executou o script
-
--- Criar uma base quadrada no Workspace, 1000 unidades acima
-local squareBase = Instance.new("Part")
-squareBase.Size = Vector3.new(100, 1, 100) -- Dimensões da base
-squareBase.Anchored = true -- A base não se move
-squareBase.Position = Vector3.new(0, 1000, 0) -- Posição 1000 unidades acima do chão
-squareBase.BrickColor = BrickColor.new("Bright blue") -- Cor da base
-squareBase.Name = "HighSquareBase" -- Nome da base
-squareBase.Parent = workspace -- Adiciona a base ao Workspace
-
--- Função para teletransportar o jogador para cima da base
-local function teleportPlayerToBase()
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-
-    if humanoidRootPart then
-        -- Teletransporta o jogador para a posição correta, ajustando para ficar em cima da base
-        humanoidRootPart.CFrame = CFrame.new(0, 1005, 0) -- Posição 1000 + 5 para garantir que fique em cima da base
-        print(player.Name .. " foi teletransportado para a base a 1000 unidades de altura!")
+    if state then
+        showAFKProtectionUI()
     else
-        warn("HumanoidRootPart não encontrado para " .. player.Name)
+        hideAFKProtectionUI()
     end
-end
-
--- Executar o teletransporte assim que o jogador executar o script
-teleportPlayerToBase()   
 end)
 
-tab.newButton("Animações", "//Todas As Animações Do Roblox Grátis", function()
-     loadstring(game:HttpGet('https://pastefy.app/S7xNJSXX/raw'))()execute("Script9")
+Options.Toggle_AutoBuyGear:SetValue(false)
+
+-- Anti-AFK completo
+Player.Idled:Connect(function()
+    if _G.antiAFK then
+        VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        task.wait(1)
+        VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        print("✅ Anti-AFK acionado")
+    end
 end)
+
+-- Loop superleve para auto buy
+RunService.Heartbeat:Connect(function()
+    if _G.autoBuyGear and #SelectedGears > 0 then
+        pcall(function()
+            for _, gearName in pairs(SelectedGears) do
+                BuyGearEvent:FireServer(gearName)
+            end
+        end)
+    end
+end)
+
+
+
+-- Addons:
+-- SaveManager (Allows you to have a configuration system)
+-- InterfaceManager (Allows you to have a interface managment system)
+
+-- Hand the library over to our managers
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+-- Ignore keys that are used by ThemeManager.
+-- (we dont want configs to save themes, do we?)
+SaveManager:IgnoreThemeSettings()
+
+-- You can add indexes of elements the save manager should ignore
+SaveManager:SetIgnoreIndexes({})
+
+-- use case for doing it this way:
+-- a script hub could have themes in a global folder
+-- and game configs in a separate folder per game
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+
+Window:SelectTab(1)
+
+Fluent:Notify({
+    Title = "WENDELX",
+    Content = "The script has been loaded.",
+    Duration = 8
+})
+
+-- You can use the SaveManager:LoadAutoloadConfig() to load a config
+-- which has been marked to be one that auto loads!
+SaveManager:LoadAutoloadConfig()
