@@ -70,7 +70,7 @@ ImageButton.BackgroundColor3 = _G.Dark;
 ImageButton.ImageColor3 = Color3.fromRGB(250, 250, 250);
 ImageButton.ImageTransparency = 0;
 ImageButton.BackgroundTransparency = 0;
-ImageButton.Image = "rbxassetid://13940080072";
+ImageButton.Image = "rbxassetid://131305981970955";
 ImageButton.AutoButtonColor = false;
 MakeDraggable(ImageButton, OutlineButton);
 CreateRounded(ImageButton, 10);
@@ -184,7 +184,7 @@ function Update:StartLoad()
 	MainLoaderFrame.BorderSizePixel = 0;
 	local TitleLoader = Instance.new("TextLabel");
 	TitleLoader.Parent = MainLoaderFrame;
-	TitleLoader.Text = "NoxHub";
+	TitleLoader.Text = "MeteHub";
 	TitleLoader.Font = Enum.Font.FredokaOne;
 	TitleLoader.TextSize = 50;
 	TitleLoader.TextColor3 = Color3.fromRGB(255, 255, 255);
@@ -261,15 +261,15 @@ local SettingsLib = {
 (getgenv()).LoadConfig = function()
 	if readfile and writefile and isfile and isfolder then
 		if not isfolder("NoxHub") then
-			makefolder("MeteHub");
+			makefolder("NoxHub");
 		end;
-		if not isfolder("MeteHub/Library/") then
-			makefolder("MeteHub/Library/");
+		if not isfolder("NoxHub/Library/") then
+			makefolder("NoxHub/Library/");
 		end;
-		if not isfile(("MeteHub/Library/" .. game.Players.LocalPlayer.Name .. ".json")) then
-			writefile("MeteHub/Library/" .. game.Players.LocalPlayer.Name .. ".json", (game:GetService("HttpService")):JSONEncode(SettingsLib));
+		if not isfile(("NoxHub/Library/" .. game.Players.LocalPlayer.Name .. ".json")) then
+			writefile("NoxHub/Library/" .. game.Players.LocalPlayer.Name .. ".json", (game:GetService("HttpService")):JSONEncode(SettingsLib));
 		else
-			local Decode = (game:GetService("HttpService")):JSONDecode(readfile("MeteHub/Library/" .. game.Players.LocalPlayer.Name .. ".json"));
+			local Decode = (game:GetService("HttpService")):JSONDecode(readfile("NoxHub/Library/" .. game.Players.LocalPlayer.Name .. ".json"));
 			for i, v in pairs(Decode) do
 				SettingsLib[i] = v;
 			end;
@@ -321,7 +321,7 @@ function Update:Window(Config)
 	local keybind = keybind or Enum.KeyCode.RightControl;
 	local yoo = string.gsub(tostring(keybind), "Enum.KeyCode.", "");
 	local NoxHub = Instance.new("ScreenGui");
-	NoxHub.Name = "MeteHub";
+	NoxHub.Name = "NoxHub";
 	NoxHub.Parent = game.CoreGui;
 	NoxHub.DisplayOrder = 999;
 	local OutlineMain = Instance.new("Frame");
@@ -378,7 +378,7 @@ function Update:Window(Config)
 	NameHub.AnchorPoint = Vector2.new(0, 0.5);
 	NameHub.Size = UDim2.new(0, 1, 0, 25);
 	NameHub.Font = Enum.Font.GothamBold;
-	NameHub.Text = "NoxHub";
+	NameHub.Text = "MeteHub";
 	NameHub.TextSize = 20;
 	NameHub.TextColor3 = Color3.fromRGB(255, 255, 255);
 	NameHub.TextXAlignment = Enum.TextXAlignment.Left;
