@@ -1,152 +1,347 @@
--- CustomUILibrary.lua (Versão Estendida com Melhorias)
+local CustomUI = {}
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
-local CustomUI = {} local TweenService = game:GetService("TweenService") local UserInputService = game:GetService("UserInputService") local StarterGui = game:GetService("StarterGui")
+local function createBase()
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Name = "StylishUI"
+    screenGui.ResetOnSpawn = false
+    screenGui.IgnoreGuiInset = true
+    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Notificações local function notify(text) StarterGui:SetCore("SendNotification", { Title = "Stylish UI", Text = text, Duration = 3 }) end
+    -- Botão arrastável para abrir/fechar
+    local openButton = Instance.new("TextButton")
+    openButton.Size = UDim2.new(0, 50, 0, 50)
+    openButton.Position = UDim2.new(0, 10, 0, 10)
+    openButton.BackgroundColor3 = Color3.fromRGB(170, 0, 255)
+    openButton.Text = "☰"
+    openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    openButton.Font = Enum.Font.GothamBold
+    openButton.TextSize = 20
+    openButton.Active = true
+    openButton.Draggable = true
+    openButton.Parent = screenGui
+    local openButtonCorner = Instance.new("UICorner", openButton)
+    openButtonCorner.CornerRadius = UDim.new(0, 25)
 
--- Botão Externo local function createExternalButton(mainFrame) local screenGui = mainFrame:FindFirstAncestorOfClass("ScreenGui")
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Name = "MainFrame"
+    mainFrame.Size = UDim2.new(0, 500, 0, 320)
+    mainFrame.Position = UDim2.new(0.5, -250, 0.5, -160)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    mainFrame.BorderSizePixel = 0
+    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    mainFrame.Active = true
+    mainFrame.Draggable = true
+    mainFrame.Parent = screenGui
+    mainFrame.Visible = false
+    local uicorner = Instance.new("UICorner", mainFrame)
+    uicorner.CornerRadius = UDim.new(0, 10)
 
-local toggleBtn = Instance.new("ImageButton")
-toggleBtn.Name = "ToggleLibButton"
-toggleBtn.Size = UDim2.new(0, 40, 0, 40)
-toggleBtn.Position = UDim2.new(0, 10, 0.5, -20)
-toggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-toggleBtn.Image = "rbxassetid://13524801807" -- Ícone personalizado
-toggleBtn.Parent = screenGui
+    local title = Instance.new("TextLabel")
+    title.Text = "⚙️ Stylish Lib"
+    title.Size = UDim2.new(1, -80, 0, 40)
+    title.BackgroundTransparency = 1
+    title.TextColor3 = Color3.fromRGB(170, 0, 255)
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 20
+    title.Parent = mainFrame
 
-local uiCorner = Instance.new("UICorner", toggleBtn)
-uiCorner.CornerRadius = UDim.new(0, 8)
+    -- Botões de fechar e minimizar
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0, 30, 0, 30)
+    closeButton.Position = UDim2.new(1, -40, 0, 5)
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 85, 85)
+    closeButton.Text = "✖"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.Font = Enum.Font.GothamBold
+    closeButton.TextSize = 16
+    closeButton.Parent = mainFrame
+    local closeCorner = Instance.new("UICorner", closeButton)
+    closeCorner.CornerRadius = UDim.new(0, 8)
 
-toggleBtn.Active = true
-toggleBtn.Draggable = true
+    local minimizeButton = Instance.new("TextButton")
+    minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+    minimizeButton.Position = UDim2.new(1, -75, 0, 5)
+    minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
+    minimizeButton.Text = "−"
+    minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    minimizeButton.Font = Enum.Font.GothamBold
+    minimizeButton.TextSize = 16
+    minimizeButton.Parent = mainFrame
+    local minimizeCorner = Instance.new("UICorner", minimizeButton)
+    minimizeCorner.CornerRadius = UDim.new(0, 8)
 
-local rotated = false
-toggleBtn.MouseButton1Click:Connect(function()
-    local rotTween = TweenService:Create(toggleBtn, TweenInfo.new(0.3), {Rotation = rotated and 0 or 360})
-    rotTween:Play()
-    rotated = not rotated
+    local tabContainer = Instance.new("Frame")
+    tabContainer.Name = "TabContainer"
+    tabContainer.Position = UDim2.new(0, 0, 0, 40)
+    tabContainer.Size = UDim2.new(1, 0, 0, 40)
+    tabContainer.BackgroundTransparency = 1
+    tabContainer.Parent = mainFrame
 
-    mainFrame.Visible = not mainFrame.Visible
-    notify(mainFrame.Visible and "Interface aberta!" or "Interface oculta!")
-end)
+    local tabLayout = Instance.new("UIListLayout")
+    tabLayout.FillDirection = Enum.FillDirection.Horizontal
+    tabLayout.Padding = UDim.new(0, 5)
+    tabLayout.Parent = tabContainer
 
+    local contentContainer = Instance.new("Frame")
+    contentContainer.Name = "ContentContainer"
+    contentContainer.Position = UDim2.new(0, 0, 0, 80)
+    contentContainer.Size = UDim2.new(1, 0, 1, -80)
+    contentContainer.BackgroundTransparency = 1
+    contentContainer.Parent = mainFrame
+
+    -- Lógica dos botões
+    openButton.MouseButton1Click:Connect(function()
+        mainFrame.Visible = not mainFrame.Visible
+    end)
+
+    closeButton.MouseButton1Click:Connect(function()
+        mainFrame.Visible = false
+    end)
+
+    minimizeButton.MouseButton1Click:Connect(function()
+        mainFrame.Size = mainFrame.Size.Y.Scale == 0 and UDim2.new(0, 500, 0, 320) or UDim2.new(0, 500, 0, 40)
+    end)
+
+    return contentContainer, tabContainer
 end
 
--- Base UI local function createBase() local screenGui = Instance.new("ScreenGui") screenGui.Name = "StylishUI" screenGui.ResetOnSpawn = false screenGui.IgnoreGuiInset = true screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+local function createTab(parent, tabContainer, tabName)
+    local tabButton = Instance.new("TextButton")
+    tabButton.Size = UDim2.new(0, 100, 0, 30)
+    tabButton.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    tabButton.Text = tabName
+    tabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tabButton.Font = Enum.Font.GothamBold
+    tabButton.TextSize = 14
+    tabButton.Parent = tabContainer
+    local tabCorner = Instance.new("UICorner", tabButton)
+    tabCorner.CornerRadius = UDim.new(0, 8)
 
-local mainFrame = Instance.new("Frame")
-mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 500, 0, 350)
-mainFrame.Position = UDim2.new(0.5, -250, 0.5, -160)
-mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-mainFrame.BorderSizePixel = 0
-mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Parent = screenGui
+    local tabContent = Instance.new("Frame")
+    tabContent.Size = UDim2.new(1, 0, 1, 0)
+    tabContent.BackgroundTransparency = 1
+    tabContent.Visible = false
+    tabContent.Parent = parent
+    local layout = Instance.new("UIListLayout")
+    layout.Padding = UDim.new(0, 10)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Parent = tabContent
 
-Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 10)
+    tabButton.MouseButton1Click:Connect(function()
+        for _, child in ipairs(parent:GetChildren()) do
+            if child:IsA("Frame") then
+                child.Visible = child == tabContent
+            end
+        end
+        for _, button in ipairs(tabContainer:GetChildren()) do
+            if button:IsA("TextButton") then
+                button.BackgroundColor3 = button == tabButton and Color3.fromRGB(170, 0, 255) or Color3.fromRGB(25, 25, 25)
+            end
+        end
+    end)
 
-createExternalButton(mainFrame)
-
-local title = Instance.new("TextLabel")
-title.Text = "⚙️ Stylish Lib"
-title.Size = UDim2.new(1, 0, 0, 40)
-title.BackgroundTransparency = 1
-title.TextColor3 = Color3.fromRGB(170, 0, 255)
-title.Font = Enum.Font.GothamSemibold
-title.TextSize = 20
-title.Parent = mainFrame
-
-local container = Instance.new("Frame")
-container.Name = "Container"
-container.Position = UDim2.new(0, 0, 0, 40)
-container.Size = UDim2.new(1, 0, 1, -40)
-container.BackgroundTransparency = 1
-container.Parent = mainFrame
-
-local layout = Instance.new("UIListLayout")
-layout.Padding = UDim.new(0, 10)
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.Parent = container
-
-return container
-
+    return tabContent
 end
 
--- Toggle com fonte bold local function createToggle(parent, text, callback) local toggle = Instance.new("TextButton") toggle.Size = UDim2.new(1, -20, 0, 40) toggle.BackgroundColor3 = Color3.fromRGB(25, 25, 25) toggle.Text = "" toggle.AutoButtonColor = false toggle.Parent = parent
+local function createToggle(parent, text, callback)
+    local toggle = Instance.new("TextButton")
+    toggle.Size = UDim2.new(1, -20, 0, 40)
+    toggle.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    toggle.Text = ""
+    toggle.AutoButtonColor = false
+    toggle.Parent = parent
+    local corner = Instance.new("UICorner", toggle)
+    corner.CornerRadius = UDim.new(0, 8)
 
-Instance.new("UICorner", toggle).CornerRadius = UDim.new(0, 8)
+    local label = Instance.new("TextLabel")
+    label.Text = text
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 14
+    label.BackgroundTransparency = 1
+    label.Position = UDim2.new(0, 10, 0, 0)
+    label.Size = UDim2.new(1, -60, 1, 0)
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Parent = toggle
 
-local label = Instance.new("TextLabel")
-label.Text = text
-label.TextColor3 = Color3.fromRGB(255, 255, 255)
-label.Font = Enum.Font.GothamSemibold
-label.TextSize = 14
-label.BackgroundTransparency = 1
-label.Position = UDim2.new(0, 10, 0, 0)
-label.Size = UDim2.new(1, -60, 1, 0)
-label.TextXAlignment = Enum.TextXAlignment.Left
-label.Parent = toggle
+    local switch = Instance.new("Frame")
+    switch.Size = UDim2.new(0, 40, 0, 20)
+    switch.Position = UDim2.new(1, -50, 0.5, -10)
+    switch.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    switch.BorderSizePixel = 0
+    switch.Parent = toggle
+    local switchCorner = Instance.new("UICorner", switch)
+    switchCorner.CornerRadius = UDim.new(1, 0)
 
-local switch = Instance.new("Frame")
-switch.Size = UDim2.new(0, 40, 0, 20)
-switch.Position = UDim2.new(1, -50, 0.5, -10)
-switch.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-switch.BorderSizePixel = 0
-switch.Parent = toggle
+    local knob = Instance.new("Frame")
+    knob.Size = UDim2.new(0, 18, 0, 18)
+    knob.Position = UDim2.new(0, 1, 0, 1)
+    knob.BackgroundColor3 = Color3.fromRGB(130, 130, 130)
+    knob.Parent = switch
+    local knobCorner = Instance.new("UICorner", knob)
+    knobCorner.CornerRadius = UDim.new(1, 0)
 
-Instance.new("UICorner", switch).CornerRadius = UDim.new(1, 0)
+    local toggled = false
+    toggle.MouseButton1Click:Connect(function()
+        toggled = not toggled
+        if toggled then
+            switch.BackgroundColor3 = Color3.fromRGB(170, 0, 255)
+            TweenService:Create(knob, TweenInfo.new(0.25), { Position = UDim2.new(1, -19, 0, 1) }):Play()
+        else
+            switch.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            TweenService:Create(knob, TweenInfo.new(0.25), { Position = UDim2.new(0, 1, 0, 1) }):Play()
+        end
+        if callback then callback(toggled) end
+    end)
+end
 
-local knob = Instance.new("Frame")
-knob.Size = UDim2.new(0, 18, 0, 18)
-knob.Position = UDim2.new(0, 1, 0, 1)
-knob.BackgroundColor3 = Color3.fromRGB(130, 130, 130)
-knob.Parent = switch
+local function createMultiDropdown(parent, text, options, callback)
+    local dropdown = Instance.new("TextButton")
+    dropdown.Size = UDim2.new(1, -20, 0, 40)
+    dropdown.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    dropdown.Text = text
+    dropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
+    dropdown.Font = Enum.Font.GothamBold
+    dropdown.TextSize = 14
+    dropdown.TextXAlignment = Enum.TextXAlignment.Left
+    dropdown.AutoButtonColor = false
+    dropdown.Parent = parent
+    local corner = Instance.new("UICorner", dropdown)
+    corner.CornerRadius = UDim.new(0, 8)
 
-Instance.new("UICorner", knob).CornerRadius = UDim.new(1, 0)
+    local arrow = Instance.new("TextLabel")
+    arrow.Text = "▼"
+    arrow.TextColor3 = Color3.fromRGB(255, 255, 255)
+    arrow.Font = Enum.Font.GothamBold
+    arrow.TextSize = 14
+    arrow.BackgroundTransparency = 1
+    arrow.Position = UDim2.new(1, -30, 0, 0)
+    arrow.Size = UDim2.new(0, 30, 1, 0)
+    arrow.Parent = dropdown
 
-local toggled = false
+    local dropdownList = Instance.new("Frame")
+    dropdownList.Size = UDim2.new(1, 0, 0, 0)
+    dropdownList.Position = UDim2.new(0, 0, 1, 5)
+    dropdownList.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    dropdownList.Visible = false
+    dropdownList.Parent = dropdown
+    local listCorner = Instance.new("UICorner", dropdownList)
+    listCorner.CornerRadius = UDim.new(0, 8)
+    local listLayout = Instance.new("UIListLayout")
+    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    listLayout.Padding = UDim.new(0, 5)
+    listLayout.Parent = dropdownList
 
-toggle.MouseButton1Click:Connect(function()
-    toggled = not toggled
-    if toggled then
-        switch.BackgroundColor3 = Color3.fromRGB(170, 0, 255)
-        TweenService:Create(knob, TweenInfo.new(0.25), { Position = UDim2.new(1, -19, 0, 1) }):Play()
-    else
-        switch.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-        TweenService:Create(knob, TweenInfo.new(0.25), { Position = UDim2.new(0, 1, 0, 1) }):Play()
+    local selected = {}
+    local optionToggles = {}
+
+    for i, option in ipairs(options) do
+        local optionButton = Instance.new("TextButton")
+        optionButton.Size = UDim2.new(1, -10, 0, 30)
+        optionButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        optionButton.Text = option
+        optionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        optionButton.Font = Enum.Font.GothamBold
+        optionButton.TextSize = 12
+        optionButton.Parent = dropdownList
+        local optionCorner = Instance.new("UICorner", optionButton)
+        optionCorner.CornerRadius = UDim.new(0, 6)
+
+        optionButton.MouseButton1Click:Connect(function()
+            selected[option] = not selected[option]
+            optionButton.BackgroundColor3 = selected[option] and Color3.fromRGB(170, 0, 255) or Color3.fromRGB(35, 35, 35)
+            if callback then
+                callback(selected)
+            end
+        end)
+        optionToggles[option] = optionButton
     end
-    if callback then callback(toggled) end
-end)
 
+    dropdown.MouseButton1Click:Connect(function()
+        dropdownList.Visible = not dropdownList.Visible
+        dropdownList.Size = dropdownList.Visible and UDim2.new(1, 0, 0, #options * 35) or UDim2.new(1, 0, 0, 0)
+        arrow.Text = dropdownList.Visible and "▲" or "▼"
+    end)
+
+    return dropdown
 end
 
-local function createSection(parent, titleText) local label = Instance.new("TextLabel") label.Text = titleText label.TextColor3 = Color3.fromRGB(170, 0, 255) label.Font = Enum.Font.GothamSemibold label.TextSize = 16 label.Size = UDim2.new(1, -20, 0, 30) label.BackgroundTransparency = 1 label.Parent = parent end
-
-local function createParagraph(parent, text) local label = Instance.new("TextLabel") label.Text = text label.TextWrapped = true label.TextColor3 = Color3.fromRGB(200, 200, 200) label.Font = Enum.Font.GothamSemibold label.TextSize = 13 label.Size = UDim2.new(1, -20, 0, 60) label.BackgroundTransparency = 1 label.Parent = parent end
-
-local function createTextbox(parent, placeholder, callback) local box = Instance.new("TextBox") box.PlaceholderText = placeholder box.Text = "" box.TextColor3 = Color3.fromRGB(255, 255, 255) box.Font = Enum.Font.GothamSemibold box.TextSize = 14 box.Size = UDim2.new(1, -20, 0, 35) box.BackgroundColor3 = Color3.fromRGB(25, 25, 25) box.ClearTextOnFocus = false box.Parent = parent
-
-Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
-
-box.FocusLost:Connect(function(enter)
-    if enter and callback then
-        callback(box.Text)
-    end
-end)
-
+local function createSection(parent, titleText)
+    local label = Instance.new("TextLabel")
+    label.Text = titleText
+    label.TextColor3 = Color3.fromRGB(170, 0, 255)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 16
+    label.Size = UDim2.new(1, -20, 0, 30)
+    label.BackgroundTransparency = 1
+    label.Parent = parent
 end
 
-function CustomUI:CreateWindow() return createBase() end
+local function createParagraph(parent, text)
+    local label = Instance.new("TextLabel")
+    label.Text = text
+    label.TextWrapped = true
+    label.TextColor3 = Color3.fromRGB(200, 200, 200)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 13
+    label.Size = UDim2.new(1, -20, 0, 60)
+    label.BackgroundTransparency = 1
+    label.Parent = parent
+end
 
-function CustomUI:CreateToggle(parent, text, callback) createToggle(parent, text, callback) end
+local function createTextbox(parent, placeholder, callback)
+    local box = Instance.new("TextBox")
+    box.PlaceholderText = placeholder
+    box.Text = ""
+    box.TextColor3 = Color3.fromRGB(255, 255, 255)
+    box.Font = Enum.Font.GothamBold
+    box.TextSize = 14
+    box.Size = UDim2.new(1, -20, 0, 35)
+    box.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    box.ClearTextOnFocus = false
+    box.Parent = parent
+    local corner = Instance.new("UICorner", box)
+    corner.CornerRadius = UDim.new(0, 8)
 
-function CustomUI:CreateSection(parent, title) createSection(parent, title) end
+    box.FocusLost:Connect(function(enter)
+        if enter and callback then
+            callback(box.Text)
+        end
+    end)
+end
 
-function CustomUI:CreateParagraph(parent, text) createParagraph(parent, text) end
+function CustomUI:CreateWindow()
+    local content, tabs = createBase()
+    local mainTab = createTab(content, tabs, "Main") -- Cria uma aba padrão chamada "Main"
+    tabs:GetChildren()[1]:Click() -- Ativa a aba padrão
+    return mainTab, tabs
+end
 
-function CustomUI:CreateTextbox(parent, placeholder, callback) createTextbox(parent, placeholder, callback) end
+function CustomUI:CreateTab(parent, tabContainer, name)
+    return createTab(parent, tabContainer, name)
+end
+
+function CustomUI:CreateToggle(parent, text, callback)
+    createToggle(parent, text, callback)
+end
+
+function CustomUI:CreateMultiDropdown(parent, text, options, callback)
+    createMultiDropdown(parent, text, options, callback)
+end
+
+function CustomUI:CreateSection(parent, title)
+    createSection(parent, title)
+end
+
+function CustomUI:CreateParagraph(parent, text)
+    createParagraph(parent, text)
+end
+
+function CustomUI:CreateTextbox(parent, placeholder, callback)
+    createTextbox(parent, placeholder, callback)
+end
 
 return CustomUI
-
